@@ -2,3 +2,12 @@
 
 
 
+## Poll/Voting System - Complete Feature Specification & Database Architecture
+
+# What's Included :
+
+Step 1: Database Migrations ✅
+    
+1. Complete database structure with 9 tables
+2. Proper indexing for performance
+3. Soft deletes support
