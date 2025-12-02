@@ -10,13 +10,16 @@ use Illuminate\Support\Facades\Auth;
 
 class PollController extends Controller
 {
-    
-    public function index()
+
+    public function index(Request $request)
     {
-        $polls = Auth::user()->polls()
-            ->withCount('votes')
-            ->latest()
-            ->paginate(10);
+        $query = Auth::user()->polls()->withCount('votes');
+
+        if ($request->has('status')) {
+            $query->where('status', $request->status);
+        }
+
+        $polls = $query->latest()->paginate(10);
 
         return view('polls.index', compact('polls'));
     }
