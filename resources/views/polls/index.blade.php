@@ -167,6 +167,7 @@
                     @else
                         <div class="space-y-6">
                             @foreach($polls as $poll)
+                           
                                 <div class="group border border-gray-200 rounded-xl hover:shadow-xl hover:border-blue-300 transition-all duration-300 overflow-hidden">
                                     <div class="p-8">
                                         <div class="flex flex-col lg:flex-row justify-between items-start gap-6">
@@ -256,6 +257,7 @@
                                                 </div>
 
                                                 {{-- Share Link --}}
+
                                                 <div class="flex items-stretch">
                                                     <input type="text" readonly value="{{ route('polls.show', $poll->slug) }}"
                                                         id="poll-link-{{ $poll->id }}"

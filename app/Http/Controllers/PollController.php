@@ -20,7 +20,7 @@ class PollController extends Controller
         }
 
         $polls = $query->latest()->paginate(10);
-
+        //dd($polls);
         return view('polls.index', compact('polls'));
     }
 
@@ -52,7 +52,7 @@ class PollController extends Controller
             'questions.*.options.*' => 'required|string',
             'questions.*.settings' => 'nullable|array',
         ]);
-
+        //dd($validated);
         DB::beginTransaction();
 
         try {
@@ -68,7 +68,7 @@ class PollController extends Controller
                 'require_email' => $validated['require_email'] ?? false,
                 'show_results_before_vote' => $validated['show_results_before_vote'] ?? false,
                 'randomize_options' => $validated['randomize_options'] ?? false,
-                'password' => $validated['password'] ? bcrypt($validated['password']) : null,
+                'password' => $validated['password'] ?? null,
                 'start_date' => $validated['start_date'] ?? null,
                 'end_date' => $validated['end_date'] ?? null,
                 'max_votes' => $validated['max_votes'] ?? null,
@@ -78,6 +78,7 @@ class PollController extends Controller
             // Create questions and options
             foreach ($validated['questions'] as $index => $questionData) {
                 $question = $poll->questions()->create([
+                    'poll_id ' => $poll->id,
                     'question_text' => $questionData['question_text'],
                     'question_type' => $questionData['question_type'],
                     'is_required' => $questionData['is_required'] ?? true,
@@ -89,6 +90,7 @@ class PollController extends Controller
                 if (!in_array($questionData['question_type'], ['text', 'rating'])) {
                     foreach ($questionData['options'] as $optionIndex => $optionText) {
                         $question->options()->create([
+                            'question_id '=> $question->id,
                             'option_text' => $optionText,
                             'order' => $optionIndex,
                         ]);
@@ -166,5 +168,15 @@ class PollController extends Controller
 
         return redirect()->route('polls.index')
             ->with('success', 'Poll deleted successfully!');
+    }
+    public function results($slug)
+    {
+        $poll = Poll::where('slug', $slug)
+            ->with(['questions.options', 'votes'])
+            ->firstOrFail();
+
+        //$this->authorize('view', $poll);
+
+        return view('polls.results', compact('poll'));
     }
 }
